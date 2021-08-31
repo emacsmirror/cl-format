@@ -3,7 +3,11 @@
 ;; Copyright (C) 2012  Andreas Politz
 
 ;; Author: Andreas Politz <politza@fh-trier.de>
+;; Maintainer: akater <nuclearspace@gmail.com>
 ;; Keywords: extensions
+;; Package-Requires: ((emacs "24.1"))
+;; URL: https://gitlab.com/akater/elisp-cl-format
+;; Version: 1.1
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
