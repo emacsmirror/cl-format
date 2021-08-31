@@ -7,6 +7,8 @@
 (require 'cl-lib)
 (eval-when-compile (require 'gv))
 (require 'cl-format-def)
+(eval-when-compile
+  (push '(fixnum ignore) defun-declarations-alist))
 
 ;;; Code:
 

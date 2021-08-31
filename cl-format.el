@@ -5,7 +5,7 @@
 ;; Author: Andreas Politz <politza@fh-trier.de>
 ;; Maintainer: akater <nuclearspace@gmail.com>
 ;; Keywords: extensions
-;; Package-Requires: ((emacs "24.1"))
+;; Package-Requires: ((emacs "25.1"))
 ;; URL: https://gitlab.com/akater/elisp-cl-format
 ;; Version: 1.1
 
@@ -76,6 +76,29 @@
 (require 'cl-lib)
 (require 'cl-format-def)
 (require 'cl-format-builtins)
+
+;; eldoc-docstring-first-line was removed in 6a19cde634 at 2014-09-26
+;; We backport it for now but it better be replaced with something contemporary
+(declare-function eldoc-docstring-first-line
+                  ;; I'm not even sure it's correct
+                  ;; to put a form rather than a string here
+                  ;; but it works and the intent is clear.
+                  (if (> emacs-major-version 24) "cl-format" "eldoc"))
+
+;; Note that any leading `*' in the docstring (which indicates the variable
+;; is a user option) is removed.
+(when (> emacs-major-version 24)
+  (defun eldoc-docstring-first-line (doc)
+    (and (stringp doc)
+         (substitute-command-keys
+          (save-match-data
+            ;; Don't use "^" in the regexp below since it may match
+            ;; anywhere in the doc-string.
+            (let ((start (if (string-match "\\`\\*" doc) (match-end 0) 0)))
+              (cond ((string-match "\n" doc)
+                     (substring doc start (match-beginning 0)))
+                    ((zerop start) doc)
+                    (t (substring doc start)))))))))
 
 (defvar cl-format-arguments nil)
 
@@ -780,7 +803,7 @@ POS defaults to point.  This function uses
      (t
       ;; (remove-hook 'font-lock-syntactic-keywords sy t)
       (font-lock-remove-keywords nil kw)))
-    (font-lock-fontify-buffer)))
+    (font-lock-ensure)))
 
 (defvar cl-format-eldoc-saved-doc-fn nil)
 (make-variable-buffer-local 'cl-format-eldoc-saved-doc-fn)
