@@ -79,15 +79,19 @@
   ;; #-(or CLISP GCL ALLEGRO CMU SBCL OpenMCL LISPWORKS) UNKNOWN
 
 (ert-deftest format-016 ()
-  (should (equal (cl-format nil "~%;; ~<~%;; ~1:; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~;~
+  (should
+   (equal
+    (cl-format
+     nil
+     "~%;; ~<~%;; ~1:; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~;~
  ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~;~
  ~s~; ~s~; ~s~; ~s~;~>~%"               ; 2!
-                            'AAAAAAA 'BBBBBB 'CCCCCCCCCCCC
-                            'DDDDDDDDDDDDDD 'EEEE 'FFFFFFFFF 'GGGGGGGG
-                            'HHHHH 'IIII 'J 'KK 'LLL 'MMMM 'NNNNNN
-                            'OOOOOOOOOO 'PPPPPPPPPPPPPPP 'QQQQQQQ
-                            'RRRRRRRRRRRR 'S 'TTT 'UUUUUUUUU 'VVVVVVV
-                            'WWWWWWWWWW 'XXXXX 'YYYYYY 'ZZZZZZZZ)
+     'AAAAAAA 'BBBBBB 'CCCCCCCCCCCC
+     'DDDDDDDDDDDDDD 'EEEE 'FFFFFFFFF 'GGGGGGGG
+     'HHHHH 'IIII 'J 'KK 'LLL 'MMMM 'NNNNNN
+     'OOOOOOOOOO 'PPPPPPPPPPPPPPP 'QQQQQQQ
+     'RRRRRRRRRRRR 'S 'TTT 'UUUUUUUUU 'VVVVVVV
+     'WWWWWWWWWW 'XXXXX 'YYYYYY 'ZZZZZZZZ)
 ;;; #+XCL
 ;;; "
 ;;; ;;  AAAAAAA  BBBBBB CCCCCCCCCCCC DDDDDDDDDDDDDD EEEE FFFFFFFFF GGGGGGGG
@@ -96,21 +100,25 @@
 ;;; "
 ;;;23456789;123456789;123456789;123456789;123456789;123456789;123456789;12
 ;;; #-XCL
-                 "
+    "
 ;; 
 ;;  AAAAAAA BBBBBB CCCCCCCCCCCC DDDDDDDDDDDDDD EEEE FFFFFFFFF GGGGGGGG HHHHH IIII JKK LLL MMMM NNNNNN OOOOOOOOOO PPPPPPPPPPPPPPP QQQQQQQ RRRRRRRRRRRR S TTTUUUUUUUUU VVVVVVV WWWWWWWWWW XXXXX
 ")))
 
 
 (ert-deftest format-017 ()
-  (should (equal (cl-format nil "~%;; ~<~%;; ~1,50:; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~;~
+  (should
+   (equal
+    (cl-format
+     nil
+     "~%;; ~<~%;; ~1,50:; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~;~
  ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~; ~s~;~
  ~s~; ~s~; ~s~; ~s~;~>~%"               ; 2!
-                            'AAAAAAA 'BBBBBB 'CCCCCCCCCCCC 'DDDDDDDDDDDDDD 'EEEE 'FFFFFFFFF 'GGGGGGGG
-                            'HHHHH 'IIII 'J 'KK 'LLL 'MMMM 'NNNNNN 'OOOOOOOOOO 'PPPPPPPPPPPPPPP
-                            'QQQQQQQ
-                            'RRRRRRRRRRRR 'S 'TTT 'UUUUUUUUU 'VVVVVVV 'WWWWWWWWWW 'XXXXX 'YYYYYY
-                            'ZZZZZZZZ)
+     'AAAAAAA 'BBBBBB 'CCCCCCCCCCCC 'DDDDDDDDDDDDDD 'EEEE 'FFFFFFFFF 'GGGGGGGG
+     'HHHHH 'IIII 'J 'KK 'LLL 'MMMM 'NNNNNN 'OOOOOOOOOO 'PPPPPPPPPPPPPPP
+     'QQQQQQQ
+     'RRRRRRRRRRRR 'S 'TTT 'UUUUUUUUU 'VVVVVVV 'WWWWWWWWWW 'XXXXX 'YYYYYY
+     'ZZZZZZZZ)
 ;;; #+XCL
 ;;; "
 ;;; ;;  AAAAAAA  BBBBBB  CCCCCCCCCCCC  DDDDDDDDDDDDDD
@@ -121,73 +129,81 @@
 ;;; "
 ;;;23456789;123456789;123456789;123456789;123456789;
 ;;; #-XCL
-                 "
+    "
 ;; 
 ;;  AAAAAAA BBBBBB CCCCCCCCCCCC DDDDDDDDDDDDDD EEEE FFFFFFFFF GGGGGGGG HHHHH IIII JKK LLL MMMM NNNNNN OOOOOOOOOO PPPPPPPPPPPPPPP QQQQQQQ RRRRRRRRRRRR S TTTUUUUUUUUU VVVVVVV WWWWWWWWWW XXXXX
 ")))
 
 
-(cl-labels ((format-blocksatz (stream parts prefix &optional line-length start-p end-p)
-             (if (null stream)
-                 (with-output-to-string
-                   (format-blocksatz standard-output parts prefix line-length start-p end-p))
-               (unless (cl-endp parts)
-                 (setq line-length (or line-length
-                                       ;; #|(sys::line-length stream)|#
-                                       72))
-                 (when start-p (cl-format stream prefix))
-                 (cl-loop
+(cl-labels ((format-blocksatz ( stream parts prefix
+                                &optional line-length start-p end-p)
+              (if (null stream)
+                  (with-output-to-string
+                    (format-blocksatz standard-output parts prefix
+                                      line-length start-p end-p))
+                (unless (cl-endp parts)
+                  (setq line-length (or line-length
+                                        ;; #|(sys::line-length stream)|#
+                                        72))
+                  (when start-p (cl-format stream prefix))
+                  (cl-loop
 ;;; Hier ist parts /= NIL
-                  (let ((pos (with-current-buffer stream (current-column)))
+                   (let ((pos (with-current-buffer stream (current-column)))
 ;;; #+CMU lisp::charpos
 ;;; #+SBCL sb-kernel:charpos
 ;;; #+OpenMCL ccl::column
 ;;; #+LISPWORKS stream:stream-line-column
-                        (parts-now '()))
-                    (let ((pos-now pos))
-                      (cl-loop
-                       (when (cl-endp parts) (cl-return))
-                       (let* ((part (cl-first parts))
-                              (part-length (length part)))
-                         (unless (null parts-now)
-                           (when (> (+ pos-now part-length) line-length)
-                             (cl-return)))
-                         (pop parts)
-                         (push part parts-now)
-                         (cl-incf pos-now part-length))))
+                         (parts-now '()))
+                     (let ((pos-now pos))
+                       (cl-loop
+                        (when (cl-endp parts) (cl-return))
+                        (let* ((part (cl-first parts))
+                               (part-length (length part)))
+                          (unless (null parts-now)
+                            (when (> (+ pos-now part-length) line-length)
+                              (cl-return)))
+                          (pop parts)
+                          (push part parts-now)
+                          (cl-incf pos-now part-length))))
 ;;; Hier ist parts-now /= NIL
-                    (apply #'cl-format
-                           stream
-                           (if (and (cl-endp parts) (not end-p))
-                               (apply 'cl-concatenate 'string
-                                      (make-list (length parts-now) "~a"))
-                             (cl-concatenate 'string
-                                          "~"
-                                          (prin1-to-string (max 0 (- line-length pos)))
-                                          (if (= (length parts-now) 1) "@" "")
-                                          "<"
-                                          (apply #'cl-concatenate 'string
-                                                 "~a"
-                                                 (make-list (1- (length parts-now)) "~;~a"))
-                                          "~>"))
-                           (nreverse parts-now)))
-                  (when (cl-endp parts) (cl-return))
-                  (cl-format stream prefix))))))
+                     (apply #'cl-format
+                            stream
+                            (if (and (cl-endp parts) (not end-p))
+                                (apply 'cl-concatenate 'string
+                                       (make-list (length parts-now) "~a"))
+                              (cl-concatenate 'string
+                                              "~"
+                                              (prin1-to-string
+                                               (max 0 (- line-length pos)))
+                                              (if (= (length parts-now) 1)
+                                                  "@"
+                                                "")
+                                              "<"
+                                              (apply #'cl-concatenate 'string
+                                                     "~a"
+                                                     (make-list
+                                                      (1- (length parts-now))
+                                                      "~;~a"))
+                                              "~>"))
+                            (nreverse parts-now)))
+                   (when (cl-endp parts) (cl-return))
+                   (cl-format stream prefix))))))
        
 
   (ert-deftest format-018 ()
-    (should (equal (format-blocksatz nil
-                                     (mapcar #'(lambda (x) (cl-format nil " ~a" x))
-                                             '(AAAAAAA BBBBBB CCCCCCCCCCCC DDDDDDDDDDDDDD EEEE FFFFFFFFF
-                                                       GGGGGGGG HHHHH IIII J KK LLL MMMM NNNNNN OOOOOOOOOO
-                                                       PPPPPPPPPPPPPPP QQQQQQQ RRRRRRRRRRRR S TTT UUUUUUUUU VVVVVVV
-                                                       WWWWWWWWWW XXXXX YYYYYY ZZZZZZZZ)
-                                             )
-                                     "~%;; "
-                                     nil t nil
-                                     )
+    (should
+     (equal
+      (format-blocksatz
+       nil
+       (mapcar #'(lambda (x) (cl-format nil " ~a" x))
+               '( AAAAAAA BBBBBB CCCCCCCCCCCC DDDDDDDDDDDDDD EEEE FFFFFFFFF
+                  GGGGGGGG HHHHH IIII J KK LLL MMMM NNNNNN OOOOOOOOOO
+                  PPPPPPPPPPPPPPP QQQQQQQ RRRRRRRRRRRR S TTT UUUUUUUUU VVVVVVV
+                  WWWWWWWWWW XXXXX YYYYYY ZZZZZZZZ))
+       "~%;; "
+       nil t nil)
 ;;; #+(or CLISP ALLEGRO LISPWORKS)
-                   "
+      "
 ;;  AAAAAAA  BBBBBB  CCCCCCCCCCCC DDDDDDDDDDDDDD EEEE FFFFFFFFF GGGGGGGG
 ;;  HHHHH  IIII  J KK LLL MMMM NNNNNN OOOOOOOOOO PPPPPPPPPPPPPPP QQQQQQQ
 ;;  RRRRRRRRRRRR   S  TTT  UUUUUUUUU  VVVVVVV  WWWWWWWWWW  XXXXX  YYYYYY
@@ -202,18 +218,19 @@
                                         ;123456789;123456789;123456789;123456789;123456789;123456789;123456789;12
 
   (ert-deftest format-019 ()
-    (should (equal (format-blocksatz nil
-                                     (mapcar #'(lambda (x) (cl-format nil " ~a" x))
-                                             '(AAAAAAA BBBBBB CCCCCCCCCCCC DDDDDDDDDDDDDD EEEE FFFFFFFFF
-                                                       GGGGGGGG HHHHH IIII J KK LLL MMMM NNNNNN OOOOOOOOOO
-                                                       PPPPPPPPPPPPPPP QQQQQQQ RRRRRRRRRRRR S TTT UUUUUUUUU VVVVVVV
-                                                       WWWWWWWWWW XXXXX YYYYYY ZZZZZZZZ)
-                                             )
-                                     "~%;; "
-                                     50 t t
-                                     )
+    (should
+     (equal
+      (format-blocksatz
+       nil
+       (mapcar #'(lambda (x) (cl-format nil " ~a" x))
+               '( AAAAAAA BBBBBB CCCCCCCCCCCC DDDDDDDDDDDDDD EEEE FFFFFFFFF
+                  GGGGGGGG HHHHH IIII J KK LLL MMMM NNNNNN OOOOOOOOOO
+                  PPPPPPPPPPPPPPP QQQQQQQ RRRRRRRRRRRR S TTT UUUUUUUUU VVVVVVV
+                  WWWWWWWWWW XXXXX YYYYYY ZZZZZZZZ))
+       "~%;; "
+       50 t t)
 ;;; #+(or CLISP ALLEGRO LISPWORKS)
-                   "
+      "
 ;;  AAAAAAA   BBBBBB  CCCCCCCCCCCC  DDDDDDDDDDDDDD
 ;;  EEEE  FFFFFFFFF  GGGGGGGG  HHHHH IIII J KK LLL
 ;;  MMMM NNNNNN OOOOOOOOOO PPPPPPPPPPPPPPP QQQQQQQ
@@ -234,12 +251,14 @@
 ;;; (cl-format nil "~%;; ~{~<~%;; ~1,50:; ~s~>~^,~}.~%" liste) ""
 
 (ert-deftest format-020 ()
-  (should (equal (cl-format nil "~%;; ~{~<~%;; ~1,50:; ~s~>~^,~}.~%"
-                            '(AAAAAAA BBBBBB CCCCCCCCCCCC DDDDDDDDDDDDDD EEEE FFFFFFFFF
-                                      GGGGGGGG HHHHH IIII J KK LLL MMMM NNNNNN OOOOOOOOOO
-                                      PPPPPPPPPPPPPPP QQQQQQQ RRRRRRRRRRRR S TTT UUUUUUUUU VVVVVVV
-                                      WWWWWWWWWW XXXXX YYYYYY ZZZZZZZZ)) 
-                 "
+  (should
+   (equal (cl-format
+           nil "~%;; ~{~<~%;; ~1,50:; ~s~>~^,~}.~%"
+           '( AAAAAAA BBBBBB CCCCCCCCCCCC DDDDDDDDDDDDDD EEEE FFFFFFFFF
+              GGGGGGGG HHHHH IIII J KK LLL MMMM NNNNNN OOOOOOOOOO
+              PPPPPPPPPPPPPPP QQQQQQQ RRRRRRRRRRRR S TTT UUUUUUUUU VVVVVVV
+              WWWWWWWWWW XXXXX YYYYYY ZZZZZZZZ))
+          "
 ;;  AAAAAAA, BBBBBB, CCCCCCCCCCCC, DDDDDDDDDDDDDD,
 ;;  EEEE, FFFFFFFFF, GGGGGGGG, HHHHH, IIII, J, KK,
 ;;  LLL, MMMM, NNNNNN, OOOOOOOOOO,
@@ -1556,77 +1575,82 @@ def")))
 ;; #+CLISP
 
   (ert-deftest format-207 ()
-  (should (equal (progn
-                   (defclass gray-string-output-stream (fundamental-character-output-stream)
-                     ((accumulator :type string)))
-                   (defmethod initialize-instance :after ((s gray-string-output-stream) &rest args)
-                     (setf (slot-value s 'accumulator)
-                           (make-array 0 :element-type 'character :adjustable t :fill-pointer 0)))
-                   (defmethod stream-write-char ((s gray-string-output-stream) ch)
-                     (vector-push-extend ch (slot-value s 'accumulator)))
-                   (defmethod stream-line-column ((s gray-string-output-stream))
-                     (let* ((a (slot-value s 'accumulator))
-                            (j (length a))
-                            (i (1+ (or (cl-position ?\n a :from-end t) -1))))
-                       (string-width a :start i :end j)))
-                   (list
-                    (let ((stream (make-instance 'gray-string-output-stream)))
-                      (cl-format stream "~&abc~.")
-                      (close stream)
-                      (coerce (slot-value stream 'accumulator) 'simple-string))
-                    (let ((stream (make-instance 'gray-string-output-stream)))
-                      (cl-format stream "~&abc~.")
-                      (cl-format stream "def")
-                      (close stream)
-                      (coerce (slot-value stream 'accumulator) 'simple-string))
-                    (let ((stream (make-instance 'gray-string-output-stream)))
-                      (cl-format stream "~&abc~.")
-                      (cl-format stream "~%def")
-                      (close stream)
-                      (coerce (slot-value stream 'accumulator) 'simple-string))
-                    (let ((stream (make-instance 'gray-string-output-stream)))
-                      (cl-format stream "~&abc~.")
-                      (cl-format stream "~&def")
-                      (close stream)
-                      (coerce (slot-value stream 'accumulator) 'simple-string))
-                    (let ((stream (make-instance 'gray-string-output-stream)))
-                      (cl-format stream "~&abc~.~.")
-                      (cl-format stream "~&~&def")
-                      (close stream)
-                      (coerce (slot-value stream 'accumulator) 'simple-string))
-                    (let ((stream (make-instance 'gray-string-output-stream)))
-                      (cl-format stream "~&abc~%~.")
-                      (cl-format stream "~&def")
-                      (close stream)
-                      (coerce (slot-value stream 'accumulator) 'simple-string))
-                    (let ((stream (make-instance 'gray-string-output-stream)))
-                      (cl-format stream "~&abc~.")
-                      (cl-format stream "~&~%def")
-                      (close stream)
-                      (coerce (slot-value stream 'accumulator) 'simple-string))
-                    (let ((stream (make-instance 'gray-string-output-stream)))
-                      (cl-format stream "~&abc~%~.")
-                      (cl-format stream "~&~%def")
-                      (close stream)
-                      (coerce (slot-value stream 'accumulator) 'simple-string))))
+    (should
+     (equal
+      (progn
+        (defclass gray-string-output-stream (fundamental-character-output-stream)
+          ((accumulator :type string)))
+        (defmethod initialize-instance :after ((s gray-string-output-stream)
+                                               &rest args)
+          (setf (slot-value s 'accumulator)
+                (make-array 0
+                            :element-type 'character :adjustable t
+                            :fill-pointer 0)))
+        (defmethod stream-write-char ((s gray-string-output-stream) ch)
+          (vector-push-extend ch (slot-value s 'accumulator)))
+        (defmethod stream-line-column ((s gray-string-output-stream))
+          (let* ((a (slot-value s 'accumulator))
+                 (j (length a))
+                 (i (1+ (or (cl-position ?\n a :from-end t) -1))))
+            (string-width a :start i :end j)))
+        (list
+         (let ((stream (make-instance 'gray-string-output-stream)))
+           (cl-format stream "~&abc~.")
+           (close stream)
+           (coerce (slot-value stream 'accumulator) 'simple-string))
+         (let ((stream (make-instance 'gray-string-output-stream)))
+           (cl-format stream "~&abc~.")
+           (cl-format stream "def")
+           (close stream)
+           (coerce (slot-value stream 'accumulator) 'simple-string))
+         (let ((stream (make-instance 'gray-string-output-stream)))
+           (cl-format stream "~&abc~.")
+           (cl-format stream "~%def")
+           (close stream)
+           (coerce (slot-value stream 'accumulator) 'simple-string))
+         (let ((stream (make-instance 'gray-string-output-stream)))
+           (cl-format stream "~&abc~.")
+           (cl-format stream "~&def")
+           (close stream)
+           (coerce (slot-value stream 'accumulator) 'simple-string))
+         (let ((stream (make-instance 'gray-string-output-stream)))
+           (cl-format stream "~&abc~.~.")
+           (cl-format stream "~&~&def")
+           (close stream)
+           (coerce (slot-value stream 'accumulator) 'simple-string))
+         (let ((stream (make-instance 'gray-string-output-stream)))
+           (cl-format stream "~&abc~%~.")
+           (cl-format stream "~&def")
+           (close stream)
+           (coerce (slot-value stream 'accumulator) 'simple-string))
+         (let ((stream (make-instance 'gray-string-output-stream)))
+           (cl-format stream "~&abc~.")
+           (cl-format stream "~&~%def")
+           (close stream)
+           (coerce (slot-value stream 'accumulator) 'simple-string))
+         (let ((stream (make-instance 'gray-string-output-stream)))
+           (cl-format stream "~&abc~%~.")
+           (cl-format stream "~&~%def")
+           (close stream)
+           (coerce (slot-value stream 'accumulator) 'simple-string))))
 ;;; #+CLISP
-                 ("abc
+      ("abc
 "
-                  "abc
+       "abc
 def"
-                  "abc
+       "abc
 def"
-                  "abc
+       "abc
 def"
-                  "abc
+       "abc
 def"
-                  "abc
+       "abc
 
 def"
-                  "abc
+       "abc
 
 def"
-                  "abc
+       "abc
 
 
 def"))))
@@ -1710,37 +1734,68 @@ c => 3
 ;; Test define-cl-format-directive macro
 (ert-deftest format-define-default-value ()
   (let ((cl-format-directives))
-    (should-error (macroexpand-all '(define-cl-format-directive ?? ((args 0)))))
-    (should-error (macroexpand-all '(define-cl-format-directive ?? (args (at 0)))))
-    (should-error (macroexpand-all '(define-cl-format-directive ?? (args at (colon 0)))))
-    (should (macroexpand-all '(define-cl-format-directive ?? (args at colon (parm1 0) (parm2 1)))))
-    (should-error (macroexpand-all '(define-cl-format-directive ?? (args at colon (parm1 0) (parm2 1)
-                                                                         &contained contained))))
-    (should-error (macroexpand-all '(define-cl-format-directive ?? (args at colon (parm1 0) (parm2 1)
-                                                                         &contained-end contained))))
-    (should-error (macroexpand-all '(define-cl-format-directive ?? (args at colon (parm1 0) (parm2 1)
-                                                                         &separator contained))))
-    (should-error (macroexpand-all '(define-cl-format-directive (??) (args at colon (parm1 0) (parm2 1)
-                                                 &contained (c 0)))))
-    (should (macroexpand-all '(define-cl-format-directive (??) (args at colon (parm1 0) (parm2 1)
-                                                 &contained c))))
-    (should-error (macroexpand-all '(define-cl-format-directive (??) (args at colon (parm1 0) (parm2 1)
-                                                 &contained c
-                                                 &separator (s 1)))))
-    (should (macroexpand-all '(define-cl-format-directive (??) (args at colon (parm1 0) (parm2 1)
-                                                 &contained c &separator s))))
-    (should-error (macroexpand-all '(define-cl-format-directive (??) (args at colon (parm1 0) (parm2 1)
-                                                   &contained c
-                                                   &separator s &end-separator (es 1)))))
-    (should (macroexpand-all '(define-cl-format-directive (??) (args at colon (parm1 0) (parm2 1)
-                                                 &contained c &separator s &end-separator es))))
-    (should-error (macroexpand-all '(define-cl-format-directive (??) (args at colon (parm1 0) (parm2 1)
-                                                   &contained c
-                                                   &separator s &end-separator es
-                                                   &stash (stash 2)))))
-    (should (macroexpand-all '(define-cl-format-directive (??) (args at colon (parm1 0) (parm2 1)
-                                                 &contained c &separator s &end-separator es
-                                                 &stash stash))))))
+    (should-error
+     (macroexpand-all
+      '(define-cl-format-directive ?? ((args 0)))))
+    (should-error
+     (macroexpand-all
+      '(define-cl-format-directive ?? (args (at 0)))))
+    (should-error
+     (macroexpand-all
+      '(define-cl-format-directive ?? (args at (colon 0)))))
+    (should
+     (macroexpand-all
+      '(define-cl-format-directive ?? (args at colon (parm1 0) (parm2 1)))))
+    (should-error
+     (macroexpand-all
+      '(define-cl-format-directive ?? ( args at colon (parm1 0) (parm2 1)
+                                        &contained contained))))
+    (should-error
+     (macroexpand-all
+      '(define-cl-format-directive ?? ( args at colon (parm1 0) (parm2 1)
+                                        &contained-end contained))))
+    (should-error
+     (macroexpand-all
+      '(define-cl-format-directive ?? ( args at colon (parm1 0) (parm2 1)
+                                        &separator contained))))
+    (should-error
+     (macroexpand-all
+      '(define-cl-format-directive (??) ( args at colon (parm1 0) (parm2 1)
+                                          &contained (c 0)))))
+    (should
+     (macroexpand-all
+      '(define-cl-format-directive (??) ( args at colon (parm1 0) (parm2 1)
+                                          &contained c))))
+    (should-error
+     (macroexpand-all
+      '(define-cl-format-directive (??) ( args at colon (parm1 0) (parm2 1)
+                                          &contained c &separator (s 1)))))
+    (should
+     (macroexpand-all
+      '(define-cl-format-directive (??) ( args at colon (parm1 0) (parm2 1)
+                                          &contained c &separator s))))
+    (should-error
+     (macroexpand-all
+      '(define-cl-format-directive (??) ( args at colon (parm1 0) (parm2 1)
+                                          &contained c &separator s
+                                          &end-separator (es 1)))))
+    (should
+     (macroexpand-all
+      '(define-cl-format-directive (??) ( args at colon (parm1 0) (parm2 1)
+                                          &contained c &separator s
+                                          &end-separator es))))
+    (should-error
+     (macroexpand-all
+      '(define-cl-format-directive (??) ( args at colon (parm1 0) (parm2 1)
+                                          &contained c &separator s
+                                          &end-separator es
+                                          &stash (stash 2)))))
+    (should
+     (macroexpand-all
+      '(define-cl-format-directive (??) ( args at colon (parm1 0) (parm2 1)
+                                          &contained c &separator s
+                                          &end-separator es
+                                          &stash stash))))))
 
 
 (ert-deftest format-rounding ()
