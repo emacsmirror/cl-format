@@ -475,21 +475,18 @@ loaded."
 (defun cl-format-1 (stream formatter &rest args)
   (let* ((tmp-buffer (generate-new-buffer-name " *cl-format*")))
     (unwind-protect
-        (progn
-          ;; Setup a buffer context.  If stream is not connected to
-          ;; a buffer, use tmp-buffer.
-          (set-buffer
-           (cond
-            ((bufferp stream)
-             stream)
-            ((markerp stream)
-             (or (marker-buffer stream)
-                 (cl-format-eval-error
-                  "Marker points nowhere" stream)))
-            (t (get-buffer-create tmp-buffer))))
-          (let ((standard-output (or stream
-                                     (get-buffer-create
-                                      tmp-buffer))))
+        (with-current-buffer
+            ;; Setup a buffer context.  If stream is not connected to
+            ;; a buffer, use tmp-buffer.
+            (cond
+             ((bufferp stream)
+              stream)
+             ((markerp stream)
+              (or (marker-buffer stream)
+                  (cl-format-eval-error
+                   "Marker points nowhere" stream)))
+             (t (get-buffer-create tmp-buffer)))
+          (let ((standard-output (or stream (current-buffer))))
             (let ((cl-format-arguments args))
               (catch 'cl-format-up-and-out
                 (funcall formatter args))))

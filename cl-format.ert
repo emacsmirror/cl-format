@@ -138,7 +138,7 @@
                  (when start-p (cl-format stream prefix))
                  (cl-loop
 ;;; Hier ist parts /= NIL
-                  (let ((pos (current-column))
+                  (let ((pos (with-current-buffer stream (current-column)))
 ;;; #+CMU lisp::charpos
 ;;; #+SBCL sb-kernel:charpos
 ;;; #+OpenMCL ccl::column
