@@ -7,7 +7,7 @@
 ;; Keywords: extensions
 ;; Package-Requires: ((emacs "25.1"))
 ;; URL: https://gitlab.com/akater/elisp-cl-format
-;; Version: 1.2
+;; Version: 1.2.1
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
